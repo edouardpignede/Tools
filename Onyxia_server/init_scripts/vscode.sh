@@ -52,8 +52,11 @@ jq '. + {
     "r.plot.useHttpgd": true,
      # "r.removeLeadingComments": true,
 
+     "python.defaultInterpreterPath": "/home/onyxia/work/${PROJ_NAME}/venv/bin/python3.13",
+
     "flake8.args": [
-        "--max-line-length=100"  # Max line length for Python linting
+        "--max-line-length=100",  # Max line length for Python linting
+        "--ignore=E251"
     ]
 }' "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" && mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
 
