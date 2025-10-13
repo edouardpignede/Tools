@@ -48,6 +48,8 @@ jq '. + {
      # "terminal.integrated.enableMultiLinePasteWarning": "never",
      "terminal.integrated.cursorStyle": "line",
      "terminal.integrated.cursorBlinking": true,
+
+     "cSpell.enabled": false,
      
     "r.plot.useHttpgd": true,
      # "r.removeLeadingComments": true,
@@ -58,39 +60,7 @@ jq '. + {
     ]
 }' "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" && mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
 
-# Add or modify Python-related settings using jq
-# We will keep the comments outside the jq block, as jq doesn't support comments inside JSON.
-# jq '. + {
-#     "r.bracketedPaste": true,
-#     "editor.acceptSuggestionOnEnter": "off",
-#     "git.confirmSync": false,
-#     "r.lsp.diagnostics": false,
-#     "workbench.colorTheme": "Monokai",
-#     "r.plot.defaults.fullWindowMode": true,
-#     "editor.minimap.enabled": false,
-#     "editor.wordWrap": "on",
-#     "terminal.integrated.enableMultiLinePasteWarning": "never",
-#     "terminal.integrated.cursorStyle": "line",
-#     "terminal.integrated.cursorBlinking": true,
-#     "python.terminal.activateEnvironment": false,
-#     "settingsSync.ignoredSettings": [
-#         "-python.defaultInterpreterPath"
-#     ],
-#     "diffEditor.ignoreTrimWhitespace": false,
-#     "r.removeLeadingComments": true,
-#     "editor.codeActionsOnSave": {},
-#     "diffEditor.useInlineViewWhenSpaceIsLimited": false,
-#     "r.plot.useHttpgd": true,
-#     "editor.accessibilitySupport": "off",
-#     "github.copilot.editor.enableAutoCompletions": true,
-#     "jupyter.askForKernelRestart": false,
-#     "notebook.output.scrolling": true,
-#     "redhat.telemetry.enabled": true,
-#     "git.suggestSmartCommit": false
-# }' "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" && mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"# Path to the VSCode settings.json file
 
-# # Open folder
-# code-server $WORK_DIR &
 
 # INSTALL VSCODE extensions
 
@@ -99,21 +69,17 @@ jq '. + {
 code-server --install-extension oderwat.indent-rainbow
 # Extensive markdown integration
 code-server --install-extension yzhang.markdown-all-in-one
-# Integrates Excalidraw (software for sketching diagrams)
-code-server --install-extension pomdtr.excalidraw-editor
+
 
 # COPILOT ----------------------------
 
 # Install Copilot (Microsoft's AI-assisted code writing tool)
 copilotVersion="1.129.0"
 #copilotChatVersion="0.20.0" # This version is not compatible with VSCode server 1.92.2
-
 wget --retry-on-http-error=429 https://marketplace.visualstudio.com/_apis/public/gallery/publishers/GitHub/vsextensions/copilot/${copilotVersion}/vspackage -O copilot.vsix.gz
 # wget --retry-on-http-error=429 https://marketplace.visualstudio.com/_apis/public/gallery/publishers/GitHub/vsextensions/copilot-chat/${copilotChatVersion}/vspackage -O copilot-chat.vsix.gz
-
 gzip -d copilot.vsix.gz 
 # gzip -d copilot-chat.vsix.gz 
-
 code-server --install-extension copilot.vsix
 # code-server --install-extension copilot-chat.vsix
 rm copilot.vsix #copilot-chat.vsix
