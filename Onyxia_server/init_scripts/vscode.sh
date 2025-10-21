@@ -15,6 +15,9 @@ PROJ_NAME="${FULL_NAME##*/}" # then "training"
 WORK_DIR=/home/onyxia/work/${PROJ_NAME} # then "/home/onyxia/work/training"
 REPO_URL=https://${GIT_PERSONAL_ACCESS_TOKEN}@github.com/${FULL_NAME}.git # then "github.com/BETSAKA/training"
 
+# Open work dir
+code-server --user-data-dir ~/.local/share/code-server --extensions-dir ~/.local/share/code-server/extensions "$WORK_DIR" &
+
 # Clone git repo
 git clone $REPO_URL $WORK_DIR
 chown -R onyxia:users $WORK_DIR
@@ -22,9 +25,6 @@ chown -R onyxia:users $WORK_DIR
 # Copy files from s3
 mc cp -r s3/${SERV_FOLD}/${PROJ_NAME} /home/onyxia/work/
 chown -R onyxia:users $WORK_DIR # make sure users have rights to edit
-
-# Open work dir
-code-server --user-data-dir ~/.local/share/code-server --extensions-dir ~/.local/share/code-server/extensions "$WORK_DIR" &
 
 # Set vscode settings
 # Path to the VSCode settings.json file
