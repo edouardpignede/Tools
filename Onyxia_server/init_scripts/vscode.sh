@@ -23,6 +23,9 @@ chown -R onyxia:users $WORK_DIR
 mc cp -r s3/${SERV_FOLD}/${PROJ_NAME} /home/onyxia/work/
 chown -R onyxia:users $WORK_DIR # make sure users have rights to edit
 
+# Open work dir
+code-server --user-data-dir ~/.local/share/code-server --extensions-dir ~/.local/share/code-server/extensions "$WORK_DIR" &
+
 # Set vscode settings
 # Path to the VSCode settings.json file
 # Path to the VSCode settings.json file
