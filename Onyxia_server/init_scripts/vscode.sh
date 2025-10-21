@@ -85,4 +85,4 @@ code-server --install-extension copilot.vsix
 rm copilot.vsix #copilot-chat.vsix
 
 # Open work dir
-code-server --user-data-dir ~/.local/share/code-server --extensions-dir ~/.local/share/code-server/extensions "$WORK_DIR" &
+# code-server --user-data-dir ~/.local/share/code-server --extensions-dir ~/.local/share/code-server/extensions "$WORK_DIR" &
