@@ -14,6 +14,8 @@ PROJ_NAME="${FULL_NAME##*/}" # then "training"
 # Creation of automatic variables
 WORK_DIR=/home/onyxia/work/${PROJ_NAME} # then "/home/onyxia/work/training"
 REPO_URL=https://${GIT_PERSONAL_ACCESS_TOKEN}@github.com/${FULL_NAME}.git # then "github.com/BETSAKA/training"
+# Open VSCode in folder repo
+AS_CODE_SERVER_ROOT="true"
 
 # Clone git repo
 git clone $REPO_URL $WORK_DIR
@@ -83,6 +85,3 @@ gzip -d copilot.vsix.gz
 code-server --install-extension copilot.vsix
 # code-server --install-extension copilot-chat.vsix
 rm copilot.vsix #copilot-chat.vsix
-
-# Open work dir
-# code-server --user-data-dir ~/.local/share/code-server --extensions-dir ~/.local/share/code-server/extensions "$WORK_DIR" &
