@@ -13,13 +13,13 @@ SERV_FOLD="$2"
 PROJ_NAME="${FULL_NAME##*/}" # then "training"
 # Creation of automatic variables
 WORK_DIR=/home/onyxia/work/${PROJ_NAME} # then "/home/onyxia/work/training"
-REPO_URL=https://${GIT_PERSONAL_ACCESS_TOKEN}@github.com/${FULL_NAME}.git # then "github.com/BETSAKA/training"
-# Open VSCode in folder repo
-AS_CODE_SERVER_ROOT="true"
+# REPO_URL=https://${GIT_PERSONAL_ACCESS_TOKEN}@github.com/${FULL_NAME}.git # then "github.com/BETSAKA/training"
+# # Open VSCode in folder repo
+# AS_CODE_SERVER_ROOT="true"
 
-# Clone git repo
-git clone $REPO_URL $WORK_DIR
-chown -R onyxia:users $WORK_DIR
+# # Clone git repo
+# git clone $REPO_URL $WORK_DIR
+# chown -R onyxia:users $WORK_DIR
 
 # Copy files from s3
 mc cp -r s3/${SERV_FOLD}/${PROJ_NAME} /home/onyxia/work/
