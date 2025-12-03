@@ -83,3 +83,9 @@ gzip -d copilot.vsix.gz
 code-server --install-extension copilot.vsix
 # code-server --install-extension copilot-chat.vsix
 rm copilot.vsix #copilot-chat.vsix
+
+# Install python packages
+
+# Install additional packages if a requirements.txt file is present in the project
+REQUIREMENTS_FILE=${WORK_DIR}/requirements.txt
+[ -f $REQUIREMENTS_FILE ] && pip install -r $REQUIREMENTS_FILE
