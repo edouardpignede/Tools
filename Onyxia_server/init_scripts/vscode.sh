@@ -85,8 +85,8 @@ code-server --install-extension copilot.vsix
 rm copilot.vsix #copilot-chat.vsix
 
 # Set up python .venv
-python3 -m venv ${WORK_DIR}/.venv
-source ${WORK_DIR}/.venv/bin/activate
+# python3 -m venv ${WORK_DIR}/.venv
+# source ${WORK_DIR}/.venv/bin/activate
 pip install --upgrade pip
 
 # Install python packages
