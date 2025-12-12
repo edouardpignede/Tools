@@ -94,5 +94,5 @@ REQUIREMENTS_FILE=${WORK_DIR}/requirements.txt
 if [ -f "$REQUIREMENTS_FILE" ]; then
     echo "Installing requirements..."
     # Note: We removed '--system'. We are now installing into the active venv.
-    uv pip install -r "$REQUIREMENTS_FILE"
+    uv pip install --system --no-cache -r "$REQUIREMENTS_FILE"
 fi
