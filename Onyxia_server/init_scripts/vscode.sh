@@ -77,19 +77,60 @@ code-server --install-extension yzhang.markdown-all-in-one
 copilotVersion="1.129.0"
 #copilotChatVersion="0.20.0" # This version is not compatible with VSCode server 1.92.2
 wget --retry-on-http-error=429 https://marketplace.visualstudio.com/_apis/public/gallery/publishers/GitHub/vsextensions/copilot/${copilotVersion}/vspackage -O copilot.vsix.gz
-# wget --retry-on-http-error=429 https://marketplace.visualstudio.com/_apis/public/gallery/publishers/GitHub/vsextensions/copilot-chat/${copilotChatVersion}/vspackage -O copilot-chat.vsix.gz
+wget --retry-on-http-error=429 https://marketplace.visualstudio.com/_apis/public/gallery/publishers/GitHub/vsextensions/copilot-chat/${copilotChatVersion}/vspackage -O copilot-chat.vsix.gz
 gzip -d copilot.vsix.gz 
-# gzip -d copilot-chat.vsix.gz 
+gzip -d copilot-chat.vsix.gz 
 code-server --install-extension copilot.vsix
-# code-server --install-extension copilot-chat.vsix
-rm copilot.vsix #copilot-chat.vsix
+code-server --install-extension copilot-chat.vsix
+rm copilot.vsix copilot-chat.vsix
 
-# Set up python .venv
-# python3 -m venv ${WORK_DIR}/.venv
-# source ${WORK_DIR}/.venv/bin/activate
-pip install --upgrade pip
+# # Set up python .venv
+# # python3 -m venv ${WORK_DIR}/.venv
+# # source ${WORK_DIR}/.venv/bin/activate
+# pip install --upgrade pip
 
-# Install python packages
-# Install additional packages if a requirements.txt file is present in the project
+# # Install python packages
+# # Install additional packages if a requirements.txt file is present in the project
+# REQUIREMENTS_FILE=${WORK_DIR}/requirements.txt
+# [ -f $REQUIREMENTS_FILE ] && pip install -r $REQUIREMENTS_FILE
+# --- 4. PYTHON SETUP WITH UV (VENV & FIXED VERSION) ---
+
+# Define your desired Python version
+PYTHON_VERSION="3.11" 
+VENV_DIR="${WORK_DIR}/.venv"
+
+# 1. Create the virtual environment with the specific Python version
+# uv will automatically download this python version if not present
+echo "Creating venv with Python $PYTHON_VERSION..."
+uv venv "$VENV_DIR" --python "$PYTHON_VERSION"
+
+# 2. Activate the environment for the script
+source "$VENV_DIR/bin/activate"
+
+# 3. Install requirements
 REQUIREMENTS_FILE=${WORK_DIR}/requirements.txt
-[ -f $REQUIREMENTS_FILE ] && pip install -r $REQUIREMENTS_FILE
+if [ -f "$REQUIREMENTS_FILE" ]; then
+    echo "Installing requirements..."
+    # Note: We removed '--system'. We are now installing into the active venv.
+    uv pip install -r "$REQUIREMENTS_FILE"
+fi
+
+# 4. CRITICAL: Register this venv as a Jupyter Kernel
+# Without this, you cannot select this environment in your Jupyter Notebooks.
+# We also install 'ipykernel' which is required for the kernel to run.
+echo "Registering Jupyter kernel..."
+uv pip install ipykernel
+python -m ipykernel install --user --name="${PROJ_NAME}_env" --display-name="Python ($PROJ_NAME)"
+
+# 5. Configure VS Code to see this environment
+# We verify the settings file exists (created in step 2) and inject the python path
+SETTINGS_FILE="${HOME}/.local/share/code-server/User/settings.json"
+# We use jq to set the default python interpreter to our new venv
+jq --arg venv_py "$VENV_DIR/bin/python" \
+   '. + { "python.defaultInterpreterPath": $venv_py }' \
+   "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" && mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
+
+# 6. Clean up ownership
+# Since this script often runs as root, we must give the venv back to the user
+chown -R onyxia:users "$WORK_DIR"
+chown -R onyxia:users "/home/onyxia/.local/share/jupyter" # Where kernels are stored
