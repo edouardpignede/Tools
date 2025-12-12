@@ -75,7 +75,7 @@ code-server --install-extension yzhang.markdown-all-in-one
 
 # Install Copilot (Microsoft's AI-assisted code writing tool)
 copilotVersion="1.129.0"
-#copilotChatVersion="0.20.0" # This version is not compatible with VSCode server 1.92.2
+copilotChatVersion="0.20.0" # This version is not compatible with VSCode server 1.92.2
 wget --retry-on-http-error=429 https://marketplace.visualstudio.com/_apis/public/gallery/publishers/GitHub/vsextensions/copilot/${copilotVersion}/vspackage -O copilot.vsix.gz
 wget --retry-on-http-error=429 https://marketplace.visualstudio.com/_apis/public/gallery/publishers/GitHub/vsextensions/copilot-chat/${copilotChatVersion}/vspackage -O copilot-chat.vsix.gz
 gzip -d copilot.vsix.gz 
@@ -96,13 +96,12 @@ rm copilot.vsix copilot-chat.vsix
 # --- 4. PYTHON SETUP WITH UV (VENV & FIXED VERSION) ---
 
 # Define your desired Python version
-PYTHON_VERSION="3.11" 
 VENV_DIR="${WORK_DIR}/.venv"
 
 # 1. Create the virtual environment with the specific Python version
 # uv will automatically download this python version if not present
-echo "Creating venv with Python $PYTHON_VERSION..."
-uv venv "$VENV_DIR" --python "$PYTHON_VERSION"
+echo "Creating venv with Python ..."
+uv venv "$VENV_DIR" --python /usr/bin/python3
 
 # 2. Activate the environment for the script
 source "$VENV_DIR/bin/activate"
