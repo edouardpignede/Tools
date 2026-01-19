@@ -84,15 +84,12 @@ code-server --install-extension copilot.vsix
 code-server --install-extension copilot-chat.vsix
 rm copilot.vsix copilot-chat.vsix
 
-# # Set up python .venv
-# # python3 -m venv ${WORK_DIR}/.venv
-# # source ${WORK_DIR}/.venv/bin/activate
-# pip install --upgrade pip
-
 # install python requirements
-REQUIREMENTS_FILE=${WORK_DIR}/requirements.txt
-if [ -f "$REQUIREMENTS_FILE" ]; then
-    echo "Installing requirements..."
-    # Note: We removed '--system'. We are now installing into the active venv.
-    uv pip install --system --no-cache -r "$REQUIREMENTS_FILE"
+PROJECT_FILE="${WORK_DIR}/pyproject.toml"
+if [ -f "$PROJECT_FILE" ]; then
+    echo "Syncing dependencies from pyproject.toml..."
+    # Use uv sync to install dependencies. 
+    # --frozen ensures it uses the uv.lock file without updating it.
+    # --no-cache keeps the environment/container slim.
+    uv sync --frozen --no-cache
 fi
