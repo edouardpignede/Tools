@@ -49,36 +49,36 @@ else
     PYTHON_INTERPRETER="/usr/bin/python3"
 fi
 
-# --- VSCODE SETTINGS ---
+# --- VSCODE WORKSPACE SETTINGS (Project Level) ---
+# This avoids the "cannot be applied in this window" error
+LOCAL_SETTINGS_DIR="${WORK_DIR}/.vscode"
+mkdir -p "$LOCAL_SETTINGS_DIR"
 
-SETTINGS_FILE="${HOME}/.local/share/code-server/User/settings.json"
-
-if [ ! -f "$SETTINGS_FILE" ]; then
-    echo "No existing settings.json found. Creating a new one."
-    mkdir -p "$(dirname "$SETTINGS_FILE")"
-    echo "{}" > "$SETTINGS_FILE"  
-fi
-
-# Update settings with jq
-# Added: python.defaultInterpreterPath and terminal activation settings
-jq --arg interpreter "$PYTHON_INTERPRETER" '. + {
+echo "Configuring local VS Code workspace settings..."
+cat <<EOF > "${LOCAL_SETTINGS_DIR}/settings.json"
+{
+    "python.defaultInterpreterPath": "$PYTHON_INTERPRETER",
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.analysis.extraPaths": ["$WORK_DIR"],
     "workbench.panel.defaultLocation": "right",
-    "workbench.editor.openSideBySideDirection": "down",
     "editor.rulers": [80, 100, 120],
     "files.trimTrailingWhitespace": true,
-    "files.insertFinalNewline": true,
+    "files.insertFinalNewline": true
+}
+EOF
+
+# --- 5. VSCODE GLOBAL SETTINGS (UI/Behavior) ---
+GLOBAL_SETTINGS_FILE="${HOME}/.local/share/code-server/User/settings.json"
+mkdir -p "$(dirname "$GLOBAL_SETTINGS_FILE")"
+if [ ! -f "$GLOBAL_SETTINGS_FILE" ]; then echo "{}" > "$GLOBAL_SETTINGS_FILE"; fi
+
+jq '. + {
+    "workbench.editor.openSideBySideDirection": "down",
     "terminal.integrated.cursorStyle": "line",
     "terminal.integrated.cursorBlinking": true,
     "cSpell.enabled": false,
-    "r.plot.useHttpgd": true,
-    "flake8.args": [
-        "--max-line-length=100",
-        "--ignore=E251"
-    ],
-    "python.defaultInterpreterPath": $interpreter,
-    "python.terminal.activateEnvInCurrentTerminal": true
-}' "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" && mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
-
+    "r.plot.useHttpgd": true
+}' "$GLOBAL_SETTINGS_FILE" > "$GLOBAL_SETTINGS_FILE.tmp" && mv "$GLOBAL_SETTINGS_FILE.tmp" "$GLOBAL_SETTINGS_FILE"
 # --- INSTALL VSCODE EXTENSIONS ---
 
 code-server --install-extension oderwat.indent-rainbow
