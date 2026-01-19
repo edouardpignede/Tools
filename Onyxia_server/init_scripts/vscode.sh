@@ -8,13 +8,14 @@
 
 # see example of init scripts here: https://github.com/InseeFrLab/sspcloud-init-scripts/tree/main/vscode
 
+#!/bin/bash
+
 # Parses the argument from the onyxia init 
 FULL_NAME="$1" # eg. "BETSAKA/training"
 SERV_FOLD="$2"
-PROJ_NAME="${FULL_NAME##*/}" # then "training"
-# Creation of automatic variables
-WORK_DIR=/home/onyxia/work/${PROJ_NAME} # then "/home/onyxia/work/training"
-REPO_URL=https://${GIT_PERSONAL_ACCESS_TOKEN}@github.com/${FULL_NAME}.git # then "github.com/BETSAKA/training"
+PROJ_NAME="${FULL_NAME##*/}" 
+WORK_DIR=/home/onyxia/work/${PROJ_NAME} 
+REPO_URL=https://${GIT_PERSONAL_ACCESS_TOKEN}@github.com/${FULL_NAME}.git 
 
 # Clone git repo
 git clone $REPO_URL $WORK_DIR
@@ -22,60 +23,70 @@ chown -R onyxia:users $WORK_DIR
 
 # Copy files from s3
 mc cp -r s3/${SERV_FOLD}/${PROJ_NAME} /home/onyxia/work/
-chown -R onyxia:users $WORK_DIR # make sure users have rights to edit
+chown -R onyxia:users $WORK_DIR 
 
-# Set vscode settings
-# Path to the VSCode settings.json file
+# --- UV AND PYTHON ENVIRONMENT SETUP ---
+
+# 1. Check for pyproject.toml and run sync
+PROJECT_FILE="${WORK_DIR}/pyproject.toml"
+if [ -f "$PROJECT_FILE" ]; then
+    echo "Found pyproject.toml. Initializing with uv..."
+    cd "$WORK_DIR"
+    
+    # Ensure uv is in the path (standard on most recent Onyxia images)
+    # If not, you might need: curl -LsSf https://astral.sh/uv/install.sh | sh
+    
+    uv sync --frozen --no-cache
+    
+    # 2. Force the .venv to activate in every new terminal session
+    echo "source ${WORK_DIR}/.venv/bin/activate" >> ~/.bashrc
+    
+    # 3. Define the interpreter path for VS Code settings
+    # This ensures the "Play" button and IntelliSense work immediately
+    PYTHON_INTERPRETER="${WORK_DIR}/.venv/bin/python"
+else
+    # Fallback to system python if no project file exists
+    PYTHON_INTERPRETER="/usr/bin/python3"
+fi
+
+# --- VSCODE SETTINGS ---
+
 SETTINGS_FILE="${HOME}/.local/share/code-server/User/settings.json"
 
-# Check if the settings.json file exists, otherwise create a new one
 if [ ! -f "$SETTINGS_FILE" ]; then
     echo "No existing settings.json found. Creating a new one."
     mkdir -p "$(dirname "$SETTINGS_FILE")"
-    echo "{}" > "$SETTINGS_FILE"  # Initialize with an empty JSON object
+    echo "{}" > "$SETTINGS_FILE"  
 fi
 
-# Add or modify Python-related settings using jq
-# We will keep the comments outside the jq block, as jq doesn't support comments inside JSON.
-jq '. + {
+# Update settings with jq
+# Added: python.defaultInterpreterPath and terminal activation settings
+jq --arg interpreter "$PYTHON_INTERPRETER" '. + {
     "workbench.panel.defaultLocation": "right",
     "workbench.editor.openSideBySideDirection": "down",
-
-    "editor.rulers": [80, 100, 120],  # Add specific vertical rulers
-    "files.trimTrailingWhitespace": true,  # Automatically trim trailing whitespace
-    "files.insertFinalNewline": true,  # Ensure files end with a newline
-
-     # "terminal.integrated.enableMultiLinePasteWarning": "never",
-     "terminal.integrated.cursorStyle": "line",
-     "terminal.integrated.cursorBlinking": true,
-
-     "cSpell.enabled": false,
-     
+    "editor.rulers": [80, 100, 120],
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "terminal.integrated.cursorStyle": "line",
+    "terminal.integrated.cursorBlinking": true,
+    "cSpell.enabled": false,
     "r.plot.useHttpgd": true,
-     # "r.removeLeadingComments": true,
-
     "flake8.args": [
-        "--max-line-length=100",  # Max line length for Python linting
+        "--max-line-length=100",
         "--ignore=E251"
-    ]
+    ],
+    "python.defaultInterpreterPath": $interpreter,
+    "python.terminal.activateEnvInCurrentTerminal": true
 }' "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" && mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
 
+# --- INSTALL VSCODE EXTENSIONS ---
 
-
-# INSTALL VSCODE extensions
-
-# CONFORT EXTENSIONS -----------------
-# Colorizes the indentation in front of text
 code-server --install-extension oderwat.indent-rainbow
-# Extensive markdown integration
 code-server --install-extension yzhang.markdown-all-in-one
 
-
-# COPILOT ----------------------------
-
-# Install Copilot (Microsoft's AI-assisted code writing tool)
+# COPILOT 
 copilotVersion="1.129.0"
-copilotChatVersion="0.20.0" # This version is not compatible with VSCode server 1.92.2
+copilotChatVersion="0.20.0" 
 wget --retry-on-http-error=429 https://marketplace.visualstudio.com/_apis/public/gallery/publishers/GitHub/vsextensions/copilot/${copilotVersion}/vspackage -O copilot.vsix.gz
 wget --retry-on-http-error=429 https://marketplace.visualstudio.com/_apis/public/gallery/publishers/GitHub/vsextensions/copilot-chat/${copilotChatVersion}/vspackage -O copilot-chat.vsix.gz
 gzip -d copilot.vsix.gz 
@@ -84,12 +95,4 @@ code-server --install-extension copilot.vsix
 code-server --install-extension copilot-chat.vsix
 rm copilot.vsix copilot-chat.vsix
 
-# install python requirements
-PROJECT_FILE="${WORK_DIR}/pyproject.toml"
-if [ -f "$PROJECT_FILE" ]; then
-    echo "Syncing dependencies from pyproject.toml..."
-    # Use uv sync to install dependencies. 
-    # --frozen ensures it uses the uv.lock file without updating it.
-    # --no-cache keeps the environment/container slim.
-    uv sync --frozen --no-cache
-fi
+echo "Initialization complete. Project ready in $WORK_DIR"
