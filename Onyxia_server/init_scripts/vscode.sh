@@ -66,7 +66,6 @@ jq '. + {
             "source.organizeImports.ruff": "explicit"
         }
     },
-    // This explicitly tells the Python extension NOT to use Flake8
     "python.linting.flake8Enabled": false,
     "python.linting.enabled": true
 }' "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" && mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
