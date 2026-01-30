@@ -54,10 +54,10 @@ jq '. + {
     "files.insertFinalNewline": true,
     "terminal.integrated.cursorStyle": "line",
     "terminal.integrated.cursorBlinking": true,
-    "github.chat.extensionUnification.enabled": false,
+    "chat.extensionUnification.enabled": false,
     "cSpell.enabled": false,
     "r.plot.useHttpgd": true,
-    "flake8.args": ["--max-line-length=100", "--ignore=E251,E303,E265,E226,E501"],
+    "flake8.enabled": false,
     "[python]": {
         "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.formatOnSave": true,
@@ -65,9 +65,7 @@ jq '. + {
             "source.fixAll.ruff": "explicit",
             "source.organizeImports.ruff": "explicit"
         }
-    },
-    "python.linting.flake8Enabled": false,
-    "python.linting.enabled": true
+    }
 }' "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" && mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
 
 # --- INSTALL VSCODE EXTENSIONS ---
