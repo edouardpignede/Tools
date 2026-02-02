@@ -57,6 +57,7 @@ jq '. + {
     "chat.extensionUnification.enabled": false,
     "cSpell.enabled": false,
     "r.plot.useHttpgd": true,
+    "r.lsp.diagnostics": false,
     "flake8.enabled": false,
     "[python]": {
         "editor.defaultFormatter": "charliermarsh.ruff",
