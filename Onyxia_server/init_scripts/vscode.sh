@@ -72,6 +72,7 @@ jq '. + {
 # --- INSTALL VSCODE EXTENSIONS ---
 code-server --install-extension oderwat.indent-rainbow
 code-server --install-extension yzhang.markdown-all-in-one
+code-server --install-extension 3xpo.regionfolding
 
 # COPILOT 
 copilotVersion="1.129.0"
