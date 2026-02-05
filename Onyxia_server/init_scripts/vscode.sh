@@ -19,7 +19,6 @@ if [ -f "$PROJECT_FILE" ]; then
     echo "Found pyproject.toml. Initializing with uv..."
     cd "$WORK_DIR" || exit
     uv sync --frozen --no-cache
-    echo "source ${WORK_DIR}/.venv/bin/activate" >> ~/.bashrc
     PYTHON_INTERPRETER="${WORK_DIR}/.venv/bin/python"
 else
     PYTHON_INTERPRETER="/usr/bin/python3"
