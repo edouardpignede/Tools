@@ -24,6 +24,14 @@ else
     PYTHON_INTERPRETER="/usr/bin/python3"
 fi
 
+# --- R RETICULATE SETUP ---
+R_ENV_FILE="${WORK_DIR}/.Renviron"
+if [ -f "$PROJECT_FILE" ]; then
+    echo "Configuring Reticulate to use uv environment..."
+    # This tells Reticulate exactly which python binary to use
+    echo "RETICULATE_PYTHON=${PYTHON_INTERPRETER}" >> "$R_ENV_FILE"
+fi
+
 # --- VSCODE WORKSPACE SETTINGS (Local) ---
 LOCAL_SETTINGS_DIR="${WORK_DIR}/.vscode"
 mkdir -p "$LOCAL_SETTINGS_DIR"
