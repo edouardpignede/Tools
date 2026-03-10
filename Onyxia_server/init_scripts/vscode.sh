@@ -30,7 +30,6 @@ mkdir -p "$LOCAL_SETTINGS_DIR"
 
 cat > "${LOCAL_SETTINGS_DIR}/settings.json" <<END_JSON
 {
-    "python.defaultInterpreterPath": "$PYTHON_INTERPRETER",
     "workbench.panel.defaultLocation": "right",
     "editor.rulers": [80, 100, 120],
     "files.trimTrailingWhitespace": true,
