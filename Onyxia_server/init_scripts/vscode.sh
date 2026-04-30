@@ -53,6 +53,7 @@ cat > "$SETTINGS_FILE" <<'EOF'
     "terminal.integrated.cursorStyle": "line",
     "terminal.integrated.cursorBlinking": true,
     "chat.extensionUnification.enabled": false,
+    "workbench.colorTheme": "Default Dark Modern",
     "cSpell.enabled": false,
     "r.plot.useHttpgd": true,
     "r.lsp.diagnostics": false,
