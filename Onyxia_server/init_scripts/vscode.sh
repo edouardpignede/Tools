@@ -82,16 +82,18 @@ code-server --install-extension oderwat.indent-rainbow
 code-server --install-extension yzhang.markdown-all-in-one
 code-server --install-extension 3xpo.regionfolding
 
-# COPILOT 
-copilotVersion="1.129.0"
-copilotChatVersion="0.20.0" 
-wget -q --retry-on-http-error=429 https://marketplace.visualstudio.com/_apis/public/gallery/publishers/GitHub/vsextensions/copilot/${copilotVersion}/vspackage -O copilot.vsix.gz
-wget -q --retry-on-http-error=429 https://marketplace.visualstudio.com/_apis/public/gallery/publishers/GitHub/vsextensions/copilot-chat/${copilotChatVersion}/vspackage -O copilot-chat.vsix.gz
+# --- INSTALL GITHUB COPILOT ---
+# Version 1.156.0 is highly stable for code-server environments as of 2026
+copilotVersion="1.156.0"
+echo "Downloading GitHub Copilot v${copilotVersion}..."
+curl -L -q --retry 5 "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/GitHub/vsextensions/copilot/${copilotVersion}/vspackage" \
+  -o copilot.vsix.gz
+# Extract and install
 gzip -d copilot.vsix.gz 
-gzip -d copilot-chat.vsix.gz 
-code-server --install-extension copilot.vsix
-code-server --install-extension copilot-chat.vsix
-rm copilot.vsix copilot-chat.vsix
+code-server --install-extension copilot.vsix --force
+# Cleanup
+rm copilot.vsix
+echo "GitHub Copilot installed successfully."
 
 # Final ownership fix
 chown -R onyxia:users "$WORK_DIR"
