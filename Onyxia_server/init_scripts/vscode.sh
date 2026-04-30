@@ -37,13 +37,9 @@ cat > "${LOCAL_SETTINGS_DIR}/settings.json" <<END_JSON
 }
 END_JSON
 
-# --- VSCODE GLOBAL SETTINGS (User) ---
-SETTINGS_FILE="${HOME}/.local/share/code-server/User/settings.json"
-mkdir -p "$(dirname "$SETTINGS_FILE")"
-if [ ! -f "$SETTINGS_FILE" ]; then echo "{}" > "$SETTINGS_FILE"; fi
-
-# Removed comments from inside the jq command to prevent syntax errors
-jq '. + {
+# --- VSCODE USER SETTINGS ---
+NEW_SETTINGS=$(cat <<EOF
+{
     "workbench.panel.defaultLocation": "right",
     "workbench.editor.openSideBySideDirection": "down",
     "editor.rulers": [80, 100, 120],
@@ -64,7 +60,22 @@ jq '. + {
             "source.organizeImports.ruff": "explicit"
         }
     }
-}' "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" && mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
+}
+EOF
+)
+
+# Ensure the directory exists
+mkdir -p "$(dirname "$SETTINGS_FILE")"
+# Merge with existing file OR create new one if empty/missing
+if [ -s "$SETTINGS_FILE" ]; then
+    # Merge existing ($SETTINGS_FILE) with new ($NEW_SETTINGS)
+    echo "$NEW_SETTINGS" | jq -s '.[0] * .[1]' "$SETTINGS_FILE" - > "$SETTINGS_FILE.tmp" && mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
+else
+    # File is empty or missing, just write the new settings
+    echo "$NEW_SETTINGS" > "$SETTINGS_FILE"
+fi
+# Force correct permissions so VS Code can definitely read/write it
+chown onyxia:users "$SETTINGS_FILE"
 
 # --- INSTALL VSCODE EXTENSIONS ---
 code-server --install-extension oderwat.indent-rainbow
