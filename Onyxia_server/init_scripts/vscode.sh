@@ -38,6 +38,7 @@ cat > "${LOCAL_SETTINGS_DIR}/settings.json" <<END_JSON
 END_JSON
 
 # --- VSCODE USER SETTINGS ---
+SETTINGS_FILE="${HOME}/.local/share/code-server/User/settings.json"
 NEW_SETTINGS=$(cat <<EOF
 {
     "workbench.panel.defaultLocation": "right",
