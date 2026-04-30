@@ -37,9 +37,13 @@ cat > "${LOCAL_SETTINGS_DIR}/settings.json" <<END_JSON
 }
 END_JSON
 
-# --- VSCODE USER SETTINGS ---
+# --- VSCODE USER SETTINGS (Single Source of Truth) ---
 SETTINGS_FILE="${HOME}/.local/share/code-server/User/settings.json"
-NEW_SETTINGS=$(cat <<EOF
+# Ensure directory exists
+mkdir -p "$(dirname "$SETTINGS_FILE")"
+# Completely overwrite the file with a combined set of settings
+# We use single quotes around 'EOF' to prevent variable expansion issues
+cat > "$SETTINGS_FILE" <<'EOF'
 {
     "workbench.panel.defaultLocation": "right",
     "workbench.editor.openSideBySideDirection": "down",
@@ -60,22 +64,22 @@ NEW_SETTINGS=$(cat <<EOF
             "source.fixAll.ruff": "explicit",
             "source.organizeImports.ruff": "explicit"
         }
-    }
+    },
+    "security.workspace.trust.enabled": false,
+    "security.workspace.trust.startupPrompt": "never",
+    "terminal.integrated.inheritEnv": false,
+    "git.defaultCloneDirectory": "~/work",
+    "python.testing.pytestEnabled": true,
+    "redhat.telemetry.enabled": false,
+    "julia.symbolCacheDownload": true,
+    "julia.enableTelemetry": false,
+    "r.bracketedPaste": true,
+    "workbench.secondarySideBar.defaultVisibility": "hidden",
+    "workbench.welcomePage.experimentalOnboarding": false
 }
 EOF
-)
 
-# Ensure the directory exists
-mkdir -p "$(dirname "$SETTINGS_FILE")"
-# Merge with existing file OR create new one if empty/missing
-if [ -s "$SETTINGS_FILE" ]; then
-    # Merge existing ($SETTINGS_FILE) with new ($NEW_SETTINGS)
-    echo "$NEW_SETTINGS" | jq -s '.[0] * .[1]' "$SETTINGS_FILE" - > "$SETTINGS_FILE.tmp" && mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
-else
-    # File is empty or missing, just write the new settings
-    echo "$NEW_SETTINGS" > "$SETTINGS_FILE"
-fi
-# Force correct permissions so VS Code can definitely read/write it
+# 3. Secure ownership
 chown onyxia:users "$SETTINGS_FILE"
 
 # --- INSTALL VSCODE EXTENSIONS ---
