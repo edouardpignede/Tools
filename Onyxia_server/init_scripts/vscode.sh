@@ -59,12 +59,7 @@ cat > "$SETTINGS_FILE" <<'EOF'
     "r.lsp.diagnostics": false,
     "flake8.enabled": false,
     "[python]": {
-        "editor.defaultFormatter": "charliermarsh.ruff",
-        "editor.formatOnSave": true,
-        "editor.codeActionsOnSave": {
-            "source.fixAll.ruff": "explicit",
-            "source.organizeImports.ruff": "explicit"
-        }
+        "editor.defaultFormatter": "charliermarsh.ruff"
     },
     "security.workspace.trust.enabled": false,
     "security.workspace.trust.startupPrompt": "never",
