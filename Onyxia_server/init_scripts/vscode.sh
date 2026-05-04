@@ -48,8 +48,6 @@ cat > "$SETTINGS_FILE" <<'EOF'
     "workbench.panel.defaultLocation": "right",
     "workbench.editor.openSideBySideDirection": "down",
     "editor.rulers": [80, 100, 120],
-    "files.trimTrailingWhitespace": true,
-    "files.insertFinalNewline": true,
     "terminal.integrated.cursorStyle": "line",
     "terminal.integrated.cursorBlinking": true,
     "chat.extensionUnification.enabled": false,
