@@ -32,8 +32,6 @@ mkdir -p "$(dirname "$SETTINGS_FILE")"
 # We use single quotes around 'EOF' to prevent variable expansion issues
 cat > "$SETTINGS_FILE" <<'EOF'
 {
-    "python.defaultInterpreterPath": "${PYTHON_INTERPRETER}",
-    "python.interpreterPath": "${PYTHON_INTERPRETER}",
     "workbench.panel.defaultLocation": "right",
     "workbench.editor.openSideBySideDirection": "down",
     "editor.rulers": [80, 100, 120],
