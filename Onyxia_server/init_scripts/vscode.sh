@@ -18,24 +18,11 @@ PROJECT_FILE="${WORK_DIR}/pyproject.toml"
 if [ -f "$PROJECT_FILE" ]; then
     echo "Found pyproject.toml. Initializing with uv..."
     cd "$WORK_DIR" || exit
-    uv sync --frozen --no-cache
+    uv sync --frozen --no-cache --link-mode copy
     PYTHON_INTERPRETER="${WORK_DIR}/.venv/bin/python"
 else
     PYTHON_INTERPRETER="/usr/bin/python3"
 fi
-
-# --- VSCODE WORKSPACE SETTINGS (Local) ---
-LOCAL_SETTINGS_DIR="${WORK_DIR}/.vscode"
-mkdir -p "$LOCAL_SETTINGS_DIR"
-
-cat > "${LOCAL_SETTINGS_DIR}/settings.json" <<END_JSON
-{
-    "workbench.panel.defaultLocation": "right",
-    "editor.rulers": [80, 100, 120],
-    "files.trimTrailingWhitespace": true,
-    "files.insertFinalNewline": true
-}
-END_JSON
 
 # --- VSCODE USER SETTINGS (Single Source of Truth) ---
 SETTINGS_FILE="${HOME}/.local/share/code-server/User/settings.json"
@@ -45,6 +32,8 @@ mkdir -p "$(dirname "$SETTINGS_FILE")"
 # We use single quotes around 'EOF' to prevent variable expansion issues
 cat > "$SETTINGS_FILE" <<'EOF'
 {
+    "python.defaultInterpreterPath": "${PYTHON_INTERPRETER}",
+    "python.interpreterPath": "${PYTHON_INTERPRETER}",
     "workbench.panel.defaultLocation": "right",
     "workbench.editor.openSideBySideDirection": "down",
     "editor.rulers": [80, 100, 120],
