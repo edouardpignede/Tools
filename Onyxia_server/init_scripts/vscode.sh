@@ -41,6 +41,7 @@ cat > "$SETTINGS_FILE" <<'EOF'
     "workbench.colorTheme": "Default Dark Modern",
     "cSpell.enabled": false,
     "r.plot.useHttpgd": true,
+    "r.plot.backend": "httpgd",
     "r.lsp.diagnostics": false,
     "flake8.enabled": false,
     "[python]": {
